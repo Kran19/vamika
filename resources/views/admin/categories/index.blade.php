@@ -406,7 +406,7 @@ $pageConfig = [
     }
 
     function openEditModal(category) {
-        document.getElementById('editCategoryForm').action = `/admin/categories/${category.id}`;
+        document.getElementById('editCategoryForm').action = "{{ route('admin.categories.update', ':id') }}".replace(':id', category.id);
         document.getElementById('editName').value = category.name || '';
         document.getElementById('editSlug').value = category.slug || '';
         document.getElementById('editSortOrder').value = category.sort_order ?? 0;
@@ -452,7 +452,7 @@ $pageConfig = [
         }).then((result) => {
             if (result.isConfirmed) {
                 const form = document.getElementById('deleteCategoryForm');
-                form.action = `/admin/categories/${id}`;
+                form.action = "{{ route('admin.categories.destroy', ':id') }}".replace(':id', id);
                 form.submit();
             }
         });
