@@ -27,7 +27,7 @@ class OrderController extends Controller
 
         $products = Product::where('status', 'active')->orderBy('stock', 'desc')->get();
 
-        $categories = Product::CATEGORIES;
+        $categories = \App\Models\Category::getActiveMap();
         
         return view('salesperson.orders.create', compact('shop', 'products', 'categories'));
     }

@@ -21,7 +21,7 @@
         <!-- Category Filter -->
         <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
             <button onclick="filterByCategory('all')" class="category-chip px-4 py-2 rounded-xl border border-slate-100 bg-slate-50 text-xs font-bold text-slate-600 active whitespace-nowrap">All</button>
-            @foreach(\App\Models\Product::CATEGORIES as $key => $label)
+            @foreach(\App\Models\Category::getActiveMap() as $key => $label)
                 <button onclick="filterByCategory('{{ $key }}')" class="category-chip px-4 py-2 rounded-xl border border-slate-100 bg-slate-50 text-xs font-bold text-slate-600 whitespace-nowrap">{{ $label }}</button>
             @endforeach
         </div>
@@ -186,7 +186,8 @@
         // Update UI
         document.querySelectorAll('.category-chip').forEach(chip => {
             chip.classList.remove('active');
-            if (chip.textContent.trim() === (category === 'all' ? 'All' : @json(\App\Models\Product::CATEGORIES)[category])) {
+            const categoryMap = @json(\App\Models\Category::getActiveMap());
+            if (chip.textContent.trim() === (category === 'all' ? 'All' : categoryMap[category])) {
                 chip.classList.add('active');
             }
         });

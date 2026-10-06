@@ -76,6 +76,7 @@ c:\Users\Admin\Desktop\projects\vamika\
 │   │   │   ├── Admin/                    # Administrative controllers
 │   │   │   │   ├── BirthdayController.php
 │   │   │   │   ├── BitController.php
+│   │   │   │   ├── CategoryController.php
 │   │   │   │   ├── DashboardController.php
 │   │   │   │   ├── OfferController.php
 │   │   │   │   ├── OrderController.php
@@ -108,8 +109,8 @@ c:\Users\Admin\Desktop\projects\vamika\
 │   │       ├── SalespersonMiddleware.php # Enforces role === 'salesperson'
 │   │       └── ShopOwnerMiddleware.php   # Enforces role === 'shop-owner'
 │   └── Models/                           # Eloquent Entity Models
-│       ├── ActivityLog.php
 │       ├── Bit.php
+│       ├── Category.php
 │       ├── Offer.php
 │       ├── Order.php
 │       ├── OrderItem.php
@@ -251,6 +252,7 @@ Middleware aliases are configured in `bootstrap/app.php`:
 | Create / Edit / Delete Bits (Territories) | Full | None | None | None |
 | Switch Active Bit Territory | Full | Yes (Active Bit) | None | None |
 | Product Catalog Management (CRUD + Images) | Full | None | None | None |
+| Manage Product Categories (CRUD) | Full | None | None | None |
 | Browse Product Catalog | Full | View Only | View Only | None |
 | View Outlets in Assigned Bit | Full | Yes (Assigned) | Self Only | None |
 | Quick Onboard Retail Outlet | Yes | Yes (in active bit)| Self Register | None |
@@ -313,6 +315,11 @@ Middleware aliases are configured in `bootstrap/app.php`:
 | `POST` | `/admin/products/bulk-destroy` | `Admin\ProductController@bulkDestroy` | `admin.products.bulk-destroy` | Bulk deletion of selected products |
 | `GET` | `/admin/products/stock` | `Admin\ProductController@stock` | `admin.products.stock` | Quick stock inventory adjust view |
 | `GET` | `/admin/products/top` | `Admin\ProductController@top` | `admin.products.top` | Top-selling products ranking |
+| `GET` | `/admin/categories` | `Admin\CategoryController@index` | `admin.categories.index` | Category management list & stats |
+| `POST` | `/admin/categories` | `Admin\CategoryController@store` | `admin.categories.store` | Stores new category & generates slug |
+| `PUT` | `/admin/categories/{id}` | `Admin\CategoryController@update` | `admin.categories.update` | Updates category & cascade-updates products |
+| `DELETE` | `/admin/categories/{id}` | `Admin\CategoryController@destroy` | `admin.categories.destroy` | Deletes category (guarded if products exist) |
+| `POST` | `/admin/categories/{id}/toggle-status` | `Admin\CategoryController@toggleStatus` | `admin.categories.toggle-status` | Toggles category active/inactive status |
 | `GET` | `/admin/orders` | `Admin\OrderController@index` | `admin.orders.index` | Orders listing with date/status filter |
 | `GET` | `/admin/orders/consolidation` | `Admin\OrderController@consolidation` | `admin.orders.consolidation` | Consolidated batch warehouse report |
 | `GET` | `/admin/orders/{id}` | `Admin\OrderController@show` | `admin.orders.show` | Order overview & items |
@@ -524,6 +531,7 @@ The database consists of 32 sequential migrations:
 | 30 | `2026_03_03_052236_update_users_for_creator_type_and_phone_unique.php` | `users` | Adds `creator_type` enum ('self','admin','salesperson') and unique index on `phone` |
 | 31 | `2026_03_03_055229_add_dob_to_users_table.php` | `users` | Adds `dob` (date nullable) for shop owner birthday notifications |
 | 32 | `2026_03_20_050540_refactor_products_table.php` | `products` | Drops legacy columns (`brand`, `sub_brand`, `division`) and standardizes on `category` |
+| 33 | `2026_03_25_000000_create_categories_table.php` | `categories` | `id`, `name`, `slug` (unique), `description`, `status` ('active','inactive'), `sort_order`, timestamps. Seeds 11 default brand categories |
 
 ---
 
@@ -586,11 +594,15 @@ The database consists of 32 sequential migrations:
   - `hasMany(OrderItem::class, 'order_id')`: Line items.
   - `hasOne(Visit::class, 'order_id')`: Corresponding field visit record.
   - `hasMany(WalletTransaction::class, 'order_id')`: Related wallet debits/credits.
+- **`Category`**:
+  - `hasMany(Product::class, 'category', 'slug')`: Linked products.
+  - `name`, `slug`, `description`, `status` ('active', 'inactive'), `sort_order`.
 - **`Product`**:
+  - `belongsTo(Category::class, 'category', 'slug')`: Associated dynamic category (`categoryDetails`).
   - `hasMany(ProductImage::class, 'product_id')`: Gallery images.
   - `hasMany(OrderItem::class, 'product_id')`: Order history lines.
-  - **Category Constants**:
-    `durby`, `forolly`, `million`, `michi-s`, `oshon`, `crazzy-s`, `ankit`, `mayora`, `confito`, `bakemate`.
+  - **Dynamic Categories**:
+    Dynamic table entries with `Product::CATEGORIES` fallback.
 - **`Visit`**:
   - `belongsTo(User::class, 'salesperson_id')`
   - `belongsTo(Shop::class, 'shop_id')`

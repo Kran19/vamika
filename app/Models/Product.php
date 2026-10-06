@@ -39,6 +39,21 @@ class Product extends Model
         return $this->hasMany(ProductImage::class)->orderBy('sort_order');
     }
 
+    public function categoryDetails()
+    {
+        return $this->belongsTo(Category::class, 'category', 'slug');
+    }
+
+    public function getCategoryNameAttribute()
+    {
+        return $this->categoryDetails->name ?? (self::CATEGORIES[$this->category] ?? ucfirst($this->category ?? 'General'));
+    }
+
+    public static function getCategoriesList(): array
+    {
+        return Category::getActiveMap();
+    }
+
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);

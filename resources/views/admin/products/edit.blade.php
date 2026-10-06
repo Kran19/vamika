@@ -496,7 +496,12 @@
 
             <div class="grid-2">
                 <div class="form-group">
-                    <label class="form-label" for="category">Category *</label>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="form-label mb-0" for="category" style="margin-bottom: 0;">Category *</label>
+                        <a href="{{ route('admin.categories.index') }}" target="_blank" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1">
+                            <iconify-icon icon="lucide:settings-2" width="13"></iconify-icon> Manage Categories
+                        </a>
+                    </div>
                     <select id="category" name="category" class="form-select" required>
                         <option value="">Select Category</option>
                         @foreach($categories as $key => $label)

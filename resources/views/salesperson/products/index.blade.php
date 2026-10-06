@@ -62,7 +62,7 @@
                         <h4 class="text-xs font-medium text-slate-500 mb-2">PRODUCT CATEGORY</h4>
                         <div class="flex gap-2 overflow-x-auto pb-2">
                             <div onclick="filterByCategory('all', 'Mobile')" class="filter-chip active">All</div>
-                            @foreach(\App\Models\Product::CATEGORIES as $key => $label)
+                            @foreach(\App\Models\Category::getActiveMap() as $key => $label)
                                 <div onclick="filterByCategory('{{ $key }}', 'Mobile')" class="filter-chip">{{ $label }}</div>
                             @endforeach
                         </div>

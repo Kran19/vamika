@@ -342,6 +342,21 @@ $pageConfig = [
                         <iconify-icon icon="lucide:cake" width="96"></iconify-icon>
                     </div>
                 </button>
+
+                <!-- Categories -->
+                <button onclick="window.location.href='{{ route('admin.categories.index') }}'"
+                    class="group relative flex flex-col items-start p-6 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 overflow-hidden text-left animate-in" style="animation-delay: 1.0s;">
+                    <div class="mb-5 p-4 bg-indigo-50 rounded-xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                        <iconify-icon icon="lucide:tags" width="24"></iconify-icon>
+                    </div>
+                    <div>
+                        <span class="block text-sm font-bold text-slate-900 mb-1">Categories</span>
+                        <span class="block text-[10px] text-slate-500 font-medium uppercase tracking-wider">Brand Lines</span>
+                    </div>
+                    <div class="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-10 transition-opacity text-indigo-600">
+                        <iconify-icon icon="lucide:tags" width="96"></iconify-icon>
+                    </div>
+                </button>
             </div>
         </section>
 

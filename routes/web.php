@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\OfferController as AdminOffer;
 use App\Http\Controllers\Admin\ReportController as AdminReport;
 use App\Http\Controllers\Admin\SettingsController as AdminSettings;
 use App\Http\Controllers\Admin\BirthdayController as AdminBirthday;
+use App\Http\Controllers\Admin\CategoryController as AdminCategory;
 
 /*
 |--------------------------------------------------------------------------
@@ -122,6 +123,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/products/stock', [AdminProduct::class, 'stock'])->name('products.stock');
     Route::post('/products/bulk-destroy', [AdminProduct::class, 'bulkDestroy'])->name('products.bulk-destroy');
     Route::get('/products/top', [AdminProduct::class, 'top'])->name('products.top');
+
+    // Categories
+    Route::get('/categories', [AdminCategory::class, 'index'])->name('categories.index');
+    Route::post('/categories', [AdminCategory::class, 'store'])->name('categories.store');
+    Route::put('/categories/{id}', [AdminCategory::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{id}', [AdminCategory::class, 'destroy'])->name('categories.destroy');
+    Route::post('/categories/{id}/toggle-status', [AdminCategory::class, 'toggleStatus'])->name('categories.toggle-status');
     // Orders
     Route::get('/orders/consolidation', [AdminOrder::class, 'consolidation'])->name('orders.consolidation');
     Route::get('/orders', [AdminOrder::class, 'index'])->name('orders.index');

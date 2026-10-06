@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,23 +18,25 @@ class ProductController extends Controller
             $q->where('is_primary', true);
         }])->orderBy('created_at', 'desc')->get();
         
-        $categories = Product::CATEGORIES;
+        $categories = Category::getActiveMap();
         
         return view('admin.products.index', compact('products', 'categories'));
     }
     
     public function create()
     {
-        $categories = Product::CATEGORIES;
+        $categories = Category::getActiveMap();
         return view('admin.products.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
+        $allowedCategories = array_keys(Category::getActiveMap());
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'sku' => 'required|string|max:50|unique:products,sku',
-            'category' => 'required|string|in:' . implode(',', array_keys(Product::CATEGORIES)),
+            'category' => 'required|string|in:' . implode(',', $allowedCategories),
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'status' => 'required|in:active,inactive',
@@ -65,18 +68,19 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::with('images')->findOrFail($id);
-        $categories = Product::CATEGORIES;
+        $categories = Category::getActiveMap();
         return view('admin.products.create', compact('product', 'categories')); // Reusing create view
     }
 
     public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
+        $allowedCategories = array_keys(Category::getActiveMap());
         
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'sku' => 'required|string|max:50|unique:products,sku,' . $id,
-            'category' => 'required|string|in:' . implode(',', array_keys(Product::CATEGORIES)),
+            'category' => 'required|string|in:' . implode(',', $allowedCategories),
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'status' => 'required|in:active,inactive',

@@ -612,6 +612,10 @@ $pageConfig = [
                 <iconify-icon icon="lucide:filter" width="12"></iconify-icon>
                 Filter
             </button>
+            <a href="{{ route('admin.categories.index') }}" class="mobile-quick-action-btn text-indigo-600 bg-indigo-50/70 border-indigo-100 hover:bg-indigo-100">
+                <iconify-icon icon="lucide:tags" width="12"></iconify-icon>
+                Categories
+            </a>
         </div>
 
         <!-- Mobile Filter Section -->
